@@ -1,17 +1,11 @@
-n, k = map(int, input().split())
-prods = [[0,0]]
-d = [[0]*(k+1) for _ in range(n+1)]
+N, K = map(int, input().split())
 
-for _ in range(n):
-    prods.append(list(map(int, input().split())))
-
-for i in range(1, n+1):
-    w = prods[i][0]
-    v = prods[i][1]
-    for j in range(1, k+1):
-        if j < w:
-            d[i][j] = d[i-1][j]
-        else:
-            d[i][j] = max(d[i-1][j], d[i-1][j-w] + v)
-            
-print(d[n][k])
+items = [tuple(map(int, input().split())) for i in range(N)]
+# dp[i] = 무게 i에서 가질 수 있는 최대 가치
+dp = [0]*(K+1)
+dp[0] = 1
+for w,v in items:
+    for i in range(K-w, -1, -1):
+        if dp[i]:
+            dp[i+w] = max(dp[i+w], dp[i]+v)
+print(max(dp) - 1)
