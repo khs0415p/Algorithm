@@ -1,9 +1,7 @@
-def solution(brown, yellow):
-    total = brown + yellow
-    
-    for i in range(total, int(total ** 0.5)-1, -1):
-        if not total % i:
-            h_hat = total // i
-            if 2*h_hat + 2 * (i-2) == brown:
-                return [i, h_hat]
+
             
+def solution(brown, red):
+    for i in range(1, int(red**(1/2))+1):
+        if red % i == 0:
+            if 2*(i + red//i) == brown-4:
+                return [red//i+2, i+2]
