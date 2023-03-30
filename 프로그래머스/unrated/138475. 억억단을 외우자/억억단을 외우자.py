@@ -1,31 +1,23 @@
 def solution(e, starts):
     #  e 10000000
     # s 1 5 10 100 100 억억단에서 가장 많이등장한 수 중 가장 작은 수
-    _min = min(starts)
-    _dir = [0 for _ in range(e + 1)]
-    for i in range(1, e + 1):#횟수 디렉토리
-        for j in range(i, e + 1):            
-            gu = i * j
-            if gu >= e + 1:
-                break
-            else:
-                if i == j :
-                    _dir[gu] += 1    
-                else :
-                    _dir[gu] += 2
-    #최대값 역순
-    maxnum = 0
-    check = [0 for _ in range(e + 1)]
-    for z in range(e, 0, -1): 
-        if _dir[z] >= maxnum:
-            maxnum = _dir[z]
-            check[z] = z
-        else:
-            
-            check[z] = check[z + 1]
     
+    check = [1] * (e+1)
+    
+    for i in range(2, e+1):
+        for j in range(i, e+1, i):
+            check[j] += 1
+            
     result = []
-    for start in starts:
-        result.append(check[start])
+    
+    max_list = [0] * (e+1)
+    max_num = 0
+    for i in range(len(check)-1, 0, -1):
+        if check[i] >= max_num:
+            max_list[i] = i
+            max_num = check[i]
+            
+        else:
+            max_list[i] = max_list[i+1]
         
-    return result
+    return [max_list[start] for start in starts]
