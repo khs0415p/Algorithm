@@ -1,71 +1,57 @@
 import sys
-from collections import deque
-
 input = sys.stdin.readline
-# 1:땅 0:바다
-n = int(input())
-islands = [ list(map(int, input().split())) for _ in range(n)]
 
-island_num = 1
-visited = [[0] * n for _ in range(n)]
-dx = [0, 0, 1, -1]
-dy = [1, -1, 0, 0]
-for i in range(n):
-    for j in range(n):
-        if islands[i][j] and not visited[i][j]:
-            visited[i][j] = 1
-            islands[i][j] = island_num
-            queue = deque([[i,j]])
-            
-            while queue:
-                x, y = queue.popleft()
-                
-                for k in range(4):
-                    nx = x + dx[k]
-                    ny = y + dy[k]
-                    if 0 <= nx < n and 0 <= ny < n and not visited[nx][ny] and islands[nx][ny]:
-                        visited[nx][ny] = 1
-                        islands[nx][ny] = island_num
-                        queue.append([nx, ny])
-                        
-            island_num += 1
-            
-min_value = float("inf")
-for i in range(n):
-    for j in range(n):
-        if islands[i][j]:
-            
-            i_id = islands[i][j]
-            
-            visited = [[0] * n for _ in range(n)]
-            visited[i][j] = 1
-            
-            queue = deque([])
-            
-            for k in range(4):
-                nx , ny = i + dx[k], j + dy[k]
-                
-                if 0 <= nx < n and 0 <= ny < n and not visited[nx][ny] and not islands[nx][ny]:
-                    visited[nx][ny] = 1
-                    queue.append([nx, ny, 1])
-                    
-            
-            visited = [[0] * n for _ in range(n)]
-            
-            while queue:
-                x, y, dist = queue.popleft()
-                
-                if visited[x][y] or islands[x][y] == i_id: continue
-                visited[x][y] = 1
-                
-                if islands[x][y] != 0:
-                    min_value = min(min_value, dist - 1)
-                    queue = []
-                    break
-                
-                for k in range(4):
-                    nx , ny = x + dx[k], y + dy[k]    
-                    if 0 <= nx < n and 0 <= ny < n and not visited[nx][ny] :
-                        queue.append([nx, ny, dist + 1])
-            
-print(min_value)
+
+def main(N):
+    def adjs(r, c):
+        if 0 < r:  yield r-1, c
+        if 0 < c:  yield r, c-1
+        if r < N-1:  yield r+1, c
+        if c < N-1:  yield r, c+1
+
+
+    board = [list(map(int, input().split())) for _ in range(N)]
+    island_id = -1
+    edges = []
+    for r in range(N):
+        for c in range(N):
+            if board[r][c] <= 0:
+                continue
+            board[r][c] = island_id
+            stack = [(r, c)]
+            tmp = set()
+            while stack:
+                r, c = stack.pop()
+                for rr, cc in adjs(r, c):
+                    if board[rr][cc] <= 0:
+                        if not board[rr][cc]:
+                            tmp.add((r, c))
+                        continue
+                    board[rr][cc] = island_id
+                    stack.append((rr, cc))
+            island_id -= 1
+            edges.append(list(tmp))
+
+    bridge = 10000
+    for i in range(len(edges)):
+        is_visited = [[False] * N for _ in range(N)]
+        que = edges[i]
+        dist = 0
+        while dist < bridge:
+            tmp = []
+            for r, c in que:
+                for rr, cc in adjs(r, c):
+                    if board[rr][cc] == ~i or is_visited[rr][cc]:
+                        continue
+                    if board[rr][cc] < 0:
+                        bridge = dist
+                    is_visited[rr][cc] = True
+                    tmp.append((rr, cc))
+            que = tmp
+            dist += 1
+    return bridge
+
+
+if __name__ == '__main__':
+    answer = main(int(input()))
+    print(answer)
