@@ -4,10 +4,14 @@ input = sys.stdin.readline
 
 N, M = map(int, input().split())
 board = [list(map(int, input().split())) for _ in range(N)]
+max_value = max(map(max, board))
 result = float("-inf")
 
 def dfs(depth, x, y, visited, total):
     global result
+    
+    if total + max_value * (4-depth) <= result:
+        return
     if depth == 4:
         result = max(result, total)
         return
