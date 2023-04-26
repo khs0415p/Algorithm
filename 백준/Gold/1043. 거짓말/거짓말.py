@@ -16,7 +16,7 @@ def main(n, m, know_set):
     answer = 0
     # print(graph)
     for party in parties:
-        flag = False
+        flag = True
         for per in party:
             stack = [per]
             visited = set([per])
@@ -24,14 +24,14 @@ def main(n, m, know_set):
                 cur_node = stack.pop()
                 
                 if cur_node in know_set:
-                    flag = True
+                    flag = False
                     break
                 
                 for node in graph[cur_node]:
                     if node not in visited:
                         visited.add(node)
                         stack.append(node)
-        if not flag:
+        if flag:
             answer += 1
                 
                     
