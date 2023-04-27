@@ -1,29 +1,22 @@
-import sys
-from collections import defaultdict
+from sys import stdin
 
-input = sys.stdin.readline
-
-answer =0
-n,d,k,c = map(int,input().split())
-sushi = [int(input()) for _ in range(n)]
-
-l=0
-r=0
-
-dict = defaultdict(int)
-dict[c] +=1
-
-while r < k:
-    dict[sushi[r]] +=1
-    r+=1
-
-while l < n:
-    answer = max(answer, len(dict))
-    dict[sushi[l]] -=1
-    if dict[sushi[l]] == 0:
-        del dict[sushi[l]]
-    dict [sushi[r%n]] +=1
-    l +=1
-    r +=1
-
+input = stdin.readline
+N, d, k, c = map(int, input().split())
+arr = [int(input()) for _ in range(N)]
+arr = arr + arr[:k]
+memo = [0] * (d + 1)
+count = 0
+answer = 0
+for i in range(k - 1):
+    memo[arr[i]] += 1
+    if memo[arr[i]] == 1:
+        count += 1
+for i in range(k - 1, len(arr)):
+    memo[arr[i]] += 1
+    if memo[arr[i]] == 1:
+        count += 1
+    answer = max(answer, count + (not bool(memo[c])))
+    memo[arr[i - k + 1]] -= 1
+    if memo[arr[i - k + 1]] == 0:
+        count -= 1
 print(answer)
