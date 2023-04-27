@@ -1,20 +1,29 @@
 import sys
+from collections import defaultdict
 
-def main(n, d, k, c):
-    
-    
-    sushi = [int(input()) for _ in range(n)]
-    answer = 0
-    coupon = set([c])
-    belt = sushi + sushi[:(k-1)]
-    for i in range(n):
-        k_sushi = set(belt[i: i+k])
-        answer = max(answer, len(k_sushi | coupon))
-        
-    return answer
+input = sys.stdin.readline
 
-if __name__ == "__main__":
-    input = sys.stdin.readline
-    n, d, k, c = map(int, input().split())
-    print(main(n, d, k, c))
-    
+answer =0
+n,d,k,c = map(int,input().split())
+sushi = [int(input()) for _ in range(n)]
+
+l=0
+r=0
+
+dict = defaultdict(int)
+dict[c] +=1
+
+while r < k:
+    dict[sushi[r]] +=1
+    r+=1
+
+while l < n:
+    answer = max(answer, len(dict))
+    dict[sushi[l]] -=1
+    if dict[sushi[l]] == 0:
+        del dict[sushi[l]]
+    dict [sushi[r%n]] +=1
+    l +=1
+    r +=1
+
+print(answer)
