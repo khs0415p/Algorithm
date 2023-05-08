@@ -8,7 +8,7 @@ def main(n, medals, m, balls):
         tmp = set()
         for i in dp:
             tmp.add(i+medal)
-            tmp.add(i-medal)
+            tmp.add(abs(i-medal))
         dp |= tmp
             
     answer = []
