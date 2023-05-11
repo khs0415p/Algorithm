@@ -1,38 +1,35 @@
 import sys
-sys.setrecursionlimit(10**6)
+input = sys.stdin.readline
 
-def find(table, a):
-    if table[a] == a:
-        return a
-    table[a] = find(table, table[a])
-    return table[a]
+def sol(n: int, m: int) -> str:
+    def find(x: int) -> int:
+        if parent[x] < 0:
+            return x
+        parent[x] = find(parent[x])
+        return parent[x]
 
-def union(table, a, b):
-    a = find(table, a)
-    b = find(table, b)
-    if a < b:
-        table[b] = a
-    else:
-        table[a] = b
     
-
-def main(n, m):
-    
-    table = [i for i in range(n+1)]    
-    for _ in range(m):
-        com, u, v = map(int, input().split())
-
-        if com:
-            a, b = find(table, u), find(table, v)
-            if a == b:
-                print("YES")
-            else:
-                print("NO")
+    def union(x: int, y: int):
+        if parent[x] > parent[y]:
+            parent[x] = y
         else:
-            union(table, u, v)
-    
+            if parent[x] == parent[y]:
+                parent[x] -= 1
+            parent[y] = x
 
-if __name__ == "__main__":
-    input = sys.stdin.readline
-    n, m = map(int, input().split())
-    main(n, m)
+    
+    parent = [-1] * (n+1)
+    ans = list()
+    for _ in range(m):
+        op,a,b = map(int, input().split())
+        x,y = find(a),find(b)
+        if op:
+            ans.append('YES' if x==y else 'NO')
+        else:
+            if x != y:
+                union(x, y)
+    
+    return '\n'.join(ans)
+
+
+print(sol(*map(int, input().split())))
