@@ -1,17 +1,15 @@
 import sys
 sys.setrecursionlimit(10**6)
 
-
-
-def find(a):
+def find(table, a):
     if table[a] == a:
         return a
-    table[a] = find(table[a])
+    table[a] = find(table, table[a])
     return table[a]
 
-def union(a, b):
-    a = find(a)
-    b = find( b)
+def union(table, a, b):
+    a = find(table, a)
+    b = find(table, b)
     if a < b:
         table[b] = a
     else:
@@ -20,20 +18,21 @@ def union(a, b):
 
 def main(n, m):
     
+    table = [i for i in range(n+1)]    
     for _ in range(m):
         com, u, v = map(int, input().split())
+
         if com:
-            a, b = find(u), find(v)
+            a, b = find(table, u), find(table, v)
             if a == b:
                 print("YES")
             else:
                 print("NO")
         else:
-            union(u, v)
+            union(table, u, v)
     
 
 if __name__ == "__main__":
     input = sys.stdin.readline
     n, m = map(int, input().split())
-    table = [i for i in range(n+1)]
     main(n, m)
