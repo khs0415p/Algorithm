@@ -1,33 +1,22 @@
 import sys
-input = sys.stdin.readline
+
+def main(text, exp):
+    
+    new_text = []
+    for t in text:
+        new_text.append(t)
+        if t == exp[-1] and ''.join(new_text[-(len(exp)):]) == exp:
+            cnt = 0
+            while cnt < len(exp):
+                new_text.pop()
+                cnt += 1
+            
+    return ''.join(new_text) if new_text else "FRULA"
+        
 
 
-if __name__ == '__main__':
-    string = input().rstrip()
-    bomb = input().rstrip()
-    lb, ls = len(bomb), len(string)
-    stack = []
-    cur = []
-    
-    si = 0
-    i = 0
-    while si < ls:
-        if i == lb:
-            del cur[-lb:]
-            i = stack.pop() if stack else 0
-            continue
-        if string[si] == bomb[i]:
-            i += 1
-        else:
-            if i and string[si] == bomb[0]:
-                stack.append(i)
-                i = 1
-            else:
-                stack = []
-                i = 0
-        cur.append(string[si])
-        si += 1
-    
-    if i == lb:
-        del cur[-lb:]
-    print(''.join(map(str, cur)) if cur else 'FRULA')
+if __name__ == "__main__":
+    input = sys.stdin.readline
+    text = input().rstrip()
+    exp = input().rstrip()
+    print(main(text, exp))
