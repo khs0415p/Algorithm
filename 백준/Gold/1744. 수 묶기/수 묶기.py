@@ -18,25 +18,14 @@ def main(n):
     neg.sort(reverse=True)
     
     while len(pos) > 1:
-        tmp = 1
-        for _ in range(2):
-            tmp *= pos.pop()
-        ones += tmp
+        ones += (pos.pop() * pos.pop())
         
-    while pos:
-        ones += pos.pop()
-    
-    
+        
     while len(neg) > 1:
-        tmp = 1
-        for _ in range(2):
-            tmp *= neg.pop()
-        ones += tmp
+        ones += (neg.pop() * neg.pop())
         
-    while neg:
-        ones += neg.pop()
     
-    return ones
+    return ones + (pos[0] if pos else 0) + (neg[0] if neg else 0)
     
 
 
