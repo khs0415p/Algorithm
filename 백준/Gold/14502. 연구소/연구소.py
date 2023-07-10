@@ -1,5 +1,7 @@
 import sys
 from collections import deque
+from copy import deepcopy
+
 input = sys.stdin.readline
 # 8 10
 def main(n, m):
@@ -7,51 +9,44 @@ def main(n, m):
     dx = [0, 0, 1, -1]
     dy = [1, -1, 0, 0]
     answer = 0
-    def bfs():
+    def bfs(subset):
         nonlocal answer
+        c_board = deepcopy(board)
         
-        virus = set()
-        tmp = 0
+        # 벽
+        for sub in subset:
+            c_board[sub[0]][sub[1]] = 1
+            
+        # 바이러스
         for i in range(n):
             for j in range(m):
-                if board[i][j] == 2:
+                if c_board[i][j] == 2:
                     queue = deque([[i, j]])
-                    tmp += 1
                     while queue:
-                        # print(queue)
                         r, c = queue.popleft()
                         for k in range(4):
                             nr, nc = r + dx[k], c + dy[k]
-                            
-                            if nr < 0 or nr >= n or nc < 0 or nc >= m or board[nr][nc] != 0: continue
-                            virus.add((nr, nc))
-                            board[nr][nc] = 2
+                            if nr < 0 or nr >= n or nc < 0 or nc >= m or c_board[nr][nc] != 0: continue
+                            c_board[nr][nc] = 2
                             queue.append((nr, nc))
 
         total = 0
-        for row in board:
+        for row in c_board:
             total += row.count(0)
-            
         answer = max(answer, total)
-        
-        for v in virus:
-            board[v[0]][v[1]] = 0
             
 
     
-    def comb(cnt):
-        if cnt == 3:
-            bfs()
+    def comb(start, wall_length,  subset):
+        if len(subset) == 3:
+            bfs(subset)
             return
-        # 중복 제거하는법?
-        for i in range(n):
-            for j in range(m):
-                if board[i][j] == 0:
-                    board[i][j] = 1
-                    comb(cnt + 1)
-                    board[i][j] = 0
+        
+        for i in range(start, wall_length):
+            comb(i+1, wall_length, subset + [p_wall[i]])
     
-    comb(0)
+    p_wall = [(i, j) for i in range(n) for j in range(m) if board[i][j] == 0]
+    comb(0, len(p_wall), [])
     
     return answer
 
