@@ -1,59 +1,36 @@
 import sys
-from itertools import combinations
 input = sys.stdin.readline
+from itertools import combinations as comb
 
 
-def main(n, k):
+class Teach():
+    def __init__(self, N, K):
+        self.answer = 0
+        if K == 26:
+            self.answer = N
+        elif 5 <= K:
+            base = set('acint')
+            words = [{c for c in input().rstrip()[4:-4] if c not in base} for _ in range(N)]
+            all_chars = set()
+            for word in words:
+                all_chars = all_chars.union(word)
+            self.tot_len = len(all_chars)
+            if self.tot_len <= K-5:
+                self.answer = N
+            else:
+                atoi = {c: i for i, c in enumerate(all_chars)}
+                words = [sum(1<<atoi[c] for c in word) for word in words]
+                self.answer = self._teach_words(words, K)
     
-    if k < 5:
-        return 0
-    
-    elif k == 26:
-        return n
-    
-    learned = set('antic')
-    words = [set(input().rstrip()[4:-4]) - learned for _ in range(n)]
-    
-    all_char = set()
-    for word in words:
-        all_char = all_char.union(word)
-        
-    if len(all_char) <= (k - 5):
-        return n
-    
-    # bit
-    
-    ctoi = {c:i for i, c in enumerate(all_char)}
-    words = [sum(1 << ctoi[c] for c in word) for word in words]
-    comb = []
-    def dfs(cnt, subset):
-        nonlocal comb
-        if cnt == (k - 5):
-            comb.append(subset)
-            return
-        
-        if not bit_char:
-            return
-        
-        n = bit_char.pop()
-        dfs(cnt + 1, subset + [n])
-        dfs(cnt, subset)
-        bit_char.append(n)
-    bit_char = [1 << ctoi[c] for c in all_char]
-    dfs(0, [])
-    
-    answer = 0
-    for seq in comb:
-        mask = sum(seq)
-        
-        answer = max(answer, sum([mask&word == word for word in words]))
-                
-    return answer
-    
-    # return all_char
 
-if __name__ == "__main__":
-    
-    n, k = map(int, input().split())
-    print(main(n, k))
+    def _teach_words(self, words, K):
+        answer = 0
+        for seq in comb((1<<i for i in range(self.tot_len)), K-5):
+            mask = sum(seq)
+            answer = max(answer, sum(mask&word == word for word in words))
+        return answer
 
+
+if __name__ == '__main__':
+    teacher = Teach(*map(int, input().split()))
+    print(teacher.answer)
