@@ -5,7 +5,7 @@ def main(n):
     maps = [list(map(int, input().split())) for _ in range(n)]
     target, fuel = map(int, input().split())
     maps.sort()
-    
+    maps.append([target, 0])
     
     heap = []
     answer = 0
@@ -22,14 +22,6 @@ def main(n):
         
         else:
             return -1
-        
-    while heap and fuel < target:
-        fuel -= heapq.heappop(heap)
-        answer += 1
-        
-        if fuel >= target:
-            return answer
-    
         
     return answer
 
