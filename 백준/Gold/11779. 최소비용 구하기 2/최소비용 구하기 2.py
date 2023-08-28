@@ -1,41 +1,47 @@
-import sys, heapq
-input = sys.stdin.readline
+import sys
+import heapq
 
-n = int(input())
-m = int(input())
-graph = [[] for _ in range(n + 1)]
-
-for _ in range(m):
-    a, b, c = map(int, input().split())
-    graph[a].append((b, c))
-
-start, end = map(int, input().split())
-
-# 가장 가까운 노드를 기록
-nearnest = [start] * (n + 1)
-distance = [1e9] * (n + 1)
-
-q = [(0, start)]
-while q:
-    dist, now = heapq.heappop(q)
-    if dist > distance[now]:
-        continue
+def main(n, m):
+    graph = [[] for _ in range(n+1)]
+    for _ in range(m):
+        u, v, c = map(int, input().split())
+        graph[u].append((v, c))
     
-    for next, nextDist in graph[now]:
-        cost = nextDist + dist
-        if cost < distance[next]:
-            distance[next], nearnest[next] = cost, now
-            heapq.heappush(q, (cost, next))
+    def djikstra(node):
+        distance = [float("inf")] * (n + 1)
+        distance[node] = 0
+        roads = [node] * (n+1)
+        
+        queue = []
+        heapq.heappush(queue, (distance[node], node))
+        while queue:
+            dist, cur = heapq.heappop(queue)
+            if dist > distance[cur]: continue
+            for n_node, cost in graph[cur]:
+                n_cost = dist + cost
+                if distance[n_node] > n_cost:
+                    distance[n_node] = n_cost
+                    roads[n_node] = cur
+                    heapq.heappush(queue, (n_cost, n_node))
+                
+        return distance, roads
     
-ans = []
-tmp = end
-while tmp != start:
-    ans.append(str(tmp))
-    tmp = nearnest[tmp]
+    start, end = map(int, input().split())
+    distance, roads = djikstra(start)
+    
+    print(distance[end])
+    answer = []
+    while end != start:
+        answer.append(end)
+        end = roads[end]
+        
+    answer.append(start)
+    answer.reverse()
+    print(len(answer)) 
+    print(*answer)
 
-ans.append(str(start))
-ans.reverse()
-
-print(distance[end])
-print(len(ans))
-print(" ".join(ans))
+if __name__ == "__main__":
+    input = sys.stdin.readline
+    n = int(input())
+    m = int(input())
+    main(n, m)
